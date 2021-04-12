@@ -8,15 +8,20 @@ from MultithreadedWebcam import VideoCaptureThreading
 
 
 class HandDetector():
-    def __init__(self, mode=False, maxHands=2, detectionCon=0.5, trackCon=0.5):
+    def __init__(self,
+                 mode=False,
+                 maxHands=2,
+                 detectionConfidence=0.5,
+                 trackConfidence=0.5):
         self.mode = mode
         self.maxHands = maxHands
-        self.detectionCon = detectionCon
-        self.trackCon = trackCon
+        self.detectionConfidence = detectionConfidence
+        self.trackConfidence = trackConfidence
 
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(self.mode, self.maxHands,
-                                        self.detectionCon, self.trackCon)
+                                        self.detectionConfidence,
+                                        self.trackConfidence)
         self.mpDraw = mp.solutions.drawing_utils
 
     def findhands(self, img, draw=True):
