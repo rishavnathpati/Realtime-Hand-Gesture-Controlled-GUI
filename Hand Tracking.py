@@ -1,17 +1,20 @@
-import cv2
-import time
 import os
+import time
+
+import cv2
 import mediapipe as mp
+from MultithreadedWebcam import VideoCaptureThreading
 
-wCam, hCam = 640, 480
+# from imutils.video import WebcamVideoStream
 
-cap = cv2.VideoCapture(0)
-cap.set(3, wCam)
-cap.set(4, hCam)
+cap = VideoCaptureThreading(0)
+# cap = WebcamVideoStream(src=0).start()
+cap.start()
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands()  #considering all default values
 mpDraw = mp.solutions.drawing_utils
+#Announce something to your class
 
 prevTime = 0
 currTime = 0
