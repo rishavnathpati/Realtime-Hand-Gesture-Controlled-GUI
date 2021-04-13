@@ -7,12 +7,12 @@ from MultithreadedWebcam import VideoCaptureThreading
 # from imutils.video import WebcamVideoStream
 
 
-class HandDetector():
+class HandDetector:
     def __init__(self,
                  mode=False,
                  maxHands=2,
-                 detectionConfidence=0.5,
-                 trackConfidence=0.5):
+                 detectionConfidence=0.8,
+                 trackConfidence=0.9):
         self.mode = mode
         self.maxHands = maxHands
         self.detectionConfidence = detectionConfidence
@@ -56,7 +56,7 @@ class HandDetector():
 def main():
 
     # cap = WebcamVideoStream(src=0).start()
-    cap = VideoCaptureThreading()
+    cap = VideoCaptureThreading(src=0)
     cap.start()
 
     prevTime = 0
