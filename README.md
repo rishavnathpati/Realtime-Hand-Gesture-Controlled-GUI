@@ -1,5 +1,8 @@
 # Realtime-Hand-Gesture-Controlled-GUI
-___________________________________________________________________________________________________________________________________________________________________
+__________________________________________________________________________________________________________________________________________________________________
+### DEMO:
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/40483229/114586575-74043580-9ca2-11eb-8e04-5dd07e54a2bb.gif)
+
 
 This project is an interesting conglomeration of ML, Tensorflow, opencv and a few other python libraries which lets you control your mouse and various other graphical inputs(like inreasing/decreasing volume, changing screen brightness, seeking to a particular point in a video etc), just by using your hands.
 
