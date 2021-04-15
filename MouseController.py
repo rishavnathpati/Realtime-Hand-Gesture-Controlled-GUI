@@ -4,8 +4,6 @@ import math
 
 mouse = Controller()
 
-prevTime = 0
-currTime = 0
 sx, sy = 1920, 1080
 camx, camy = 1280, 720
 pinchFlag = 0

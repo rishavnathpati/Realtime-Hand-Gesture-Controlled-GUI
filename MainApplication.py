@@ -9,7 +9,7 @@ import cv2 as cv
 import mediapipe as mp
 import numpy as np
 
-from GestureController import mouseControl
+from MouseController import mouseControl
 from model import KeyPointClassifier, PointHistoryClassifier
 from MultithreadedWebcam import VideoCaptureThreading
 from utils import CvFpsCalc
