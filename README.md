@@ -32,7 +32,7 @@ Well, I've been developing for this in Linux for Linux. So windows users might b
 
 So as far as the current situation is considered, here goes some of the things you need to tweak according to your convinience.
 
-### In the MultithreadedWebcam.py file :-
+### In the [MultithreadedWebcam.py](MultithreadedWebcam.py) file :-
 Change the value of *scr* variable according to your convinience. If you have a working/good webcam in your PC, put *src=0*. But if you have a weak webcam, or dont have it at all, simply install an app called ip webcam from playstore, start its server(scroll down at the end of the app), connect both of your devices to your router, and enter the ip adress of your android phone in *src*.
 If you're using mobile data, simply connect your pc to your mobile hotspot and again enter the ip adress in *src*. For example:
 ![image](https://user-images.githubusercontent.com/40483229/114570295-567b9f80-9c93-11eb-8d2c-fb02e473e09a.png)
@@ -63,7 +63,7 @@ Now go to Advanced settings section and make these changes:
 ![image](https://user-images.githubusercontent.com/40483229/114571054-fafde180-9c93-11eb-8221-3264ea3f5063.png)
 
 
-### In [GestureController.py](/GestureController.py) file :-
+### In [MouseController.py](/MouseController.py) file :-
 Here we have various values to tweak with. Firstly enter your screen resolution in place of variable sx and sy.
 ```
 prevTime = 0
@@ -134,10 +134,10 @@ Tracking confidence threshold (Default：0.5)
 ├── utils
 │   ├── __init__.py
 │   └── cvfpscalc.py
-├── gitignore
-├── GestureController.py
+├── KeyboardController.py
 ├── LICENSE
 ├── MainApplication.py
+├── MouseController.py
 ├── MultithreadedWebcam.py
 └── README.md
 </pre>
