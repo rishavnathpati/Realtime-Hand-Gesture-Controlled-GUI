@@ -228,4 +228,8 @@ The model using "LSTM" is as follows. <br>Please change "use_lstm = False" to "T
 
 # Translation and other improvements
 * [Nikita Kiselov](https://github.com/kinivi)
+<<<<<<< HEAD
 * [Rishav Nath Pati](https://github.com/rishavnathpati)
+=======
+* [Rishav Nath Pati](https://github.com/rishavnathpati)
+>>>>>>> b9576c4aa3e8bea4e08498790f9fceb516942853
