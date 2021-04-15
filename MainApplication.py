@@ -3,7 +3,6 @@ import copy
 import csv
 import itertools
 from collections import Counter, deque
-from os import system
 
 import cv2 as cv
 import mediapipe as mp
@@ -38,12 +37,8 @@ def get_args():
 
 
 def main():
-    # Argument parsing #################################################################
+    # Argument parsing ##################################################################################################################################
     args = get_args()
-
-    # cap_device = args.device
-    # cap_width = args.width
-    # cap_height = args.height
 
     use_static_image_mode = args.use_static_image_mode
     min_detection_confidence = args.min_detection_confidence
@@ -51,16 +46,13 @@ def main():
 
     use_brect = True
 
-    # Camera preparation ###############################################################
-    # cap = cv.VideoCapture(cap_device)
-    # cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
-    # cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
-    cap = VideoCaptureThreading(src="http://192.168.0.4:8080/video",
-                                width=960,
-                                height=540)
+    # Camera preparation ################################################################################################################################
+    cap = VideoCaptureThreading(src="http://192.168.225.142:8080/video",
+                                width=1280,
+                                height=720)
     cap.start()
 
-    # Model load #############################################################
+    # Model load ########################################################################################################################################
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
@@ -73,7 +65,7 @@ def main():
 
     point_history_classifier = PointHistoryClassifier()
 
-    # Read labels ###########################################################
+    # Read labels #######################################################################################################################################
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
@@ -89,23 +81,23 @@ def main():
             row[0] for row in point_history_classifier_labels
         ]
 
-    # FPS Measurement ########################################################
+    # FPS Measurement ####################################################################################################################################
     cvFpsCalc = CvFpsCalc(buffer_len=10)
 
-    # Coordinate history #################################################################
+    # Coordinate history ##################################################################################################################################
     history_length = 16
     point_history = deque(maxlen=history_length)
 
-    # Finger gesture history ################################################
+    # Finger gesture history ##############################################################################################################################
     finger_gesture_history = deque(maxlen=history_length)
 
-    #  ########################################################################
+    #  #####################################################################################################################################################
     mode = 0
 
     while True:
         fps = cvFpsCalc.get()
 
-        # Process Key (ESC: end) #################################################
+        # Process Key (ESC: end) ###########################################################################################################################
         key = cv.waitKey(10)
         if key == 27:  # ESC
             cap.stop()
@@ -113,21 +105,21 @@ def main():
 
         number, mode = select_mode(key, mode)
 
-        # Camera capture #####################################################
+        # Camera capture #######################################################################################################################################
         ret, image = cap.read()
         if not ret:
             break
         image = cv.flip(image, 1)  # Mirror display
         debug_image = copy.deepcopy(image)
 
-        # Detection implementation #############################################################
+        # Detection implementation ##############################################################################################################################
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
         image.flags.writeable = False
         results = hands.process(image)
         image.flags.writeable = True
 
-        #  ####################################################################
+        #  ######################################################################################################################################################
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
@@ -168,24 +160,19 @@ def main():
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
                 debug_image = draw_landmarks(debug_image, landmark_list)
                 debug_image = draw_info_text(
-                    landmark_list,
-                    debug_image,
-                    brect,
-                    handedness,
+                    landmark_list, debug_image, brect, handedness,
                     keypoint_classifier_labels[hand_sign_id],
                     point_history_classifier_labels[most_common_fg_id[0][0]],
-                    mode
-                )
+                    mode)
         else:
             point_history.append([0, 0])
 
         debug_image = draw_point_history(debug_image, point_history)
         debug_image = draw_info(debug_image, fps, mode, number)
 
-        # Screen reflection #############################################################
+        # Screen reflection #################################################################################################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
-
-    # cap.release()
+        
     cv.destroyAllWindows()
 
 
@@ -242,11 +229,10 @@ def calc_landmark_list(image, landmarks):
 
     landmark_point = []
 
-    # Keypoint
+    # Keypoint##########################################################
     for _, landmark in enumerate(landmarks.landmark):
         landmark_x = min(int(landmark.x * image_width), image_width - 1)
         landmark_y = min(int(landmark.y * image_height), image_height - 1)
-        # landmark_z = landmark.z
 
         landmark_point.append([landmark_x, landmark_y])
 
@@ -256,7 +242,7 @@ def calc_landmark_list(image, landmarks):
 def pre_process_landmark(landmark_list):
     temp_landmark_list = copy.deepcopy(landmark_list)
 
-    # Convert to relative coordinates
+    # Convert to relative coordinates####################################
     base_x, base_y = 0, 0
     for index, landmark_point in enumerate(temp_landmark_list):
         if index == 0:
@@ -516,7 +502,7 @@ def draw_bounding_rect(use_brect, image, brect):
 
 
 def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
-                   finger_gesture_text,mode):
+                   finger_gesture_text, mode):
     cv.rectangle(image, (brect[0], brect[1]), (brect[2], brect[1] - 22),
                  (0, 0, 0), -1)
 
@@ -524,10 +510,10 @@ def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
     if hand_sign_text != "":
         info_text = info_text + ':' + hand_sign_text
 
-        # Calling Gesture control functions ################################
+    #############################    Calling Gesture control functions     ################################
         hst = hand_sign_text
         px, py = tuple(landmark_list[8])
-        if(mode!=1 and mode!=2):
+        if (mode != 1 and mode != 2):
             gestureControl(px, py, hst)
 
     cv.putText(image, info_text, (brect[0] + 5, brect[1] - 4),

@@ -1,15 +1,8 @@
 import threading
 import cv2
 
-# src = "http://192.168.0.4:8080/video"
-
-
 class VideoCaptureThreading:
-    def __init__(
-            self,
-            src="http://192.168.0.4:8080/video",  # Enter current the url from ip webcam or enter ) or 1 to use local pc webcam
-            width=960,
-            height=540):
+    def __init__(self, src, width, height):
 
         self.src = src
         self.cap = cv2.VideoCapture(self.src)
