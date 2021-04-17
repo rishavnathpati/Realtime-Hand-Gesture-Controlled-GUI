@@ -11,7 +11,7 @@ dclickFlag = 0
 
 mouseLocOld = np.array([0, 0])
 mouseLoc = np.array([0, 0])
-Dampingfactor = 4
+Dampingfactor = 5
 
 
 def mouseControl(cx12, cy12, ch):
