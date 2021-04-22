@@ -1,7 +1,6 @@
 import argparse
 import copy
 import csv
-import itertools
 from collections import Counter, deque
 
 import cv2
@@ -9,9 +8,8 @@ import mediapipe as mp
 import numpy as np
 
 from model import KeyPointClassifier, PointHistoryClassifier
-from MouseController import mouseControl
-from MultithreadedWebcam import VideoCaptureThreading
-from utils import CvFpsCalc, DrawLandmarks, LandmarkProcessor
+from utils import CvFpsCalc, DrawLandmarks, LandmarkProcessor, MultithreadedWebcam
+from GUIController import MouseController #, KeyboardController
 
 
 def get_args():
@@ -53,7 +51,7 @@ def main():
     use_brect = True
 
     # Camera preparation #####################################################
-    cap = VideoCaptureThreading(src, width, height)
+    cap = MultithreadedWebcam.VideoCaptureThreading(src, width, height)
     cap.start()
 
     # Loading Mediapipe Model ################################################
@@ -123,7 +121,6 @@ def main():
         results = hands.process(image)
         image.flags.writeable = True
 
-        #  ######################################################################################################################################################
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
@@ -189,16 +186,16 @@ def gestureControl(px, py, hst, hand):
     print(hst)
 
     if (hst == "Open"):
-        mouseControl(px, py, "open")
+        MouseController.mouseControl(px, py, "open")
 
     if (hst == "Pointer" and hand == "Right"):
-        mouseControl(px, py, "pointer")
+        MouseController.mouseControl(px, py, "pointer")
 
     if (hst == "Click" and hand == "Left"):
-        mouseControl(px, py, "click")
+        MouseController.mouseControl(px, py, "click")
 
     if (hst == "Drag" and hand == "Right"):
-        mouseControl(px, py, "drag")
+        MouseController.mouseControl(px, py, "drag")
 
 
 def select_mode(key, mode):
@@ -245,8 +242,6 @@ def calc_landmark_list(image, landmarks):
         landmark_point.append([landmark_x, landmark_y])
 
     return landmark_point
-
-
 
 
 def draw_bounding_rect(use_brect, image, brect):

@@ -2,7 +2,7 @@ import threading
 import cv2
 
 
-class VideoCaptureThreading:
+class VideoCaptureThreading(object):
     def __init__(self, src, width, height):
 
         self.src = src
