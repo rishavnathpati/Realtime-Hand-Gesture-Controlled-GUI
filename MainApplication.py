@@ -9,7 +9,7 @@ import numpy as np
 
 from model import KeyPointClassifier, PointHistoryClassifier
 from utils import CvFpsCalc, DrawLandmarks, LandmarkProcessor, MultithreadedWebcam
-from GUIController import MouseController #, KeyboardController
+from GUIController import MouseController  # , KeyboardController
 
 
 def get_args():
@@ -185,13 +185,14 @@ def gestureControl(px, py, hst, hand):
 
     print(hst)
 
-    if (hst == "Open"):
-        MouseController.mouseControl(px, py, "open")
+    if (hst == "Close"):
+        MouseController.mouseControl(px, py, "close")
 
     if (hst == "Pointer" and hand == "Right"):
+        print(px, py)
         MouseController.mouseControl(px, py, "pointer")
 
-    if (hst == "Click" and hand == "Left"):
+    if (hst == "Click" and hand == "Right"):
         MouseController.mouseControl(px, py, "click")
 
     if (hst == "Drag" and hand == "Right"):
@@ -264,7 +265,9 @@ def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
 
         # Calling Gesture control functions
         hst = hand_sign_text
-        px, py = tuple(landmark_list[8])
+        index_x, index_y = tuple(landmark_list[8])
+        thumb_x, thumb_y = tuple(landmark_list[4])
+        px, py = (index_x + thumb_x)//2, (index_y + thumb_y)//2
         if (mode != 1 and mode != 2):
             gestureControl(px, py, hst, hand_info_text)
 

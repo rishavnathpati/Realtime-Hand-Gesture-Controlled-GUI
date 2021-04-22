@@ -48,9 +48,6 @@ def mouseControl(cx12, cy12, ch):
         mouse.position = mouseLoc
         mouseLocOld = mouseLoc
 
-    elif (ch == "open"):
+    elif (ch == "close"):
         dclickFlag = clickFlag = 0
         mouse.release(Button.left)
-
-    print("Finger Pos: ", cx12, cy12)
-    print("Mouse Pos: ", mouse.position)
