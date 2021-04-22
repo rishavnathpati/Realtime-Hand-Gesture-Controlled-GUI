@@ -330,7 +330,7 @@ def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
     if hand_sign_text != "":
         info_text = hand_info_text + ':' + hand_sign_text
 
-        #############################    Calling Gesture control functions
+        # Calling Gesture control functions
         hst = hand_sign_text
         px, py = tuple(landmark_list[8])
         if (mode != 1 and mode != 2):

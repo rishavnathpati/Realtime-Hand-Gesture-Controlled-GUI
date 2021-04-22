@@ -1,6 +1,7 @@
 import threading
 import cv2
 
+
 class VideoCaptureThreading:
     def __init__(self, src, width, height):
 
