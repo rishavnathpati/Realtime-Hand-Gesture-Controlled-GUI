@@ -20,7 +20,7 @@ def get_args():
 
     parser.add_argument("--src",
                         type=str,
-                        default="http://192.168.0.9:8080/video")
+                        default="http://192.168.0.4:8080/video")
     parser.add_argument("--width", help='cap width', type=int, default=1280)
     parser.add_argument("--height", help='cap height', type=int, default=720)
 
@@ -40,7 +40,7 @@ def get_args():
 
 
 def main():
-    # Argument parsing ##################################################################################################################################
+    # Argument parsing #######################################################
     args = get_args()
 
     src = args.src
@@ -53,11 +53,11 @@ def main():
 
     use_brect = True
 
-    # Camera preparation ################################################################################################################################
+    # Camera preparation #####################################################
     cap = VideoCaptureThreading(src, width, height)
     cap.start()
 
-    # Loading Mediapipe Model ########################################################################################################################################
+    # Loading Mediapipe Model ################################################
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode=use_static_image_mode,
@@ -70,7 +70,7 @@ def main():
 
     point_history_classifier = PointHistoryClassifier()
 
-    # Reading static and dynamic gesture labels #######################################################################################################################################
+    # Reading static and dynamic gesture labels ##############################
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
@@ -86,23 +86,23 @@ def main():
             row[0] for row in point_history_classifier_labels
         ]
 
-    # FPS Measurement ####################################################################################################################################
+    # FPS Measurement ########################################################
     cvFpsCalc = CvFpsCalc(buffer_len=10)
 
-    # Coordinate history ##################################################################################################################################
+    # Coordinate history #####################################################
     history_length = 16
     point_history = deque(maxlen=history_length)
 
-    # Finger gesture history ##############################################################################################################################
+    # Finger gesture history #################################################
     finger_gesture_history = deque(maxlen=history_length)
 
-    ######################################################################################################################################################
+    ##########################################################################
     mode = 0
 
     while True:
         fps = cvFpsCalc.get()
 
-        # Process Key (ESC: end) ###########################################################################################################################
+        # Process Key (ESC: end) ##############################################
         key = cv2.waitKey(10)
         if key == 27:  # ESC
             cap.stop()
@@ -110,14 +110,14 @@ def main():
 
         number, mode = select_mode(key, mode)
 
-        # Camera capture #######################################################################################################################################
+        # Camera capture ######################################################
         ret, image = cap.read()
         if not ret:
             break
         image = cv2.flip(image, 1)  # Mirror display
         debug_image = copy.deepcopy(image)
 
-        # Detection implementation ##############################################################################################################################
+        # Detection implementation ############################################
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         image.flags.writeable = False
@@ -178,7 +178,7 @@ def main():
         debug_image = draw_point_history(debug_image, point_history)
         debug_image = draw_info(debug_image, fps, mode, number)
 
-        # Screen reflection #################################################################################################################################
+        # Screen reflection ###################################################
         cv2.imshow('Hand Gesture Recognition', debug_image)
 
     cv2.destroyAllWindows()
@@ -330,7 +330,7 @@ def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
     if hand_sign_text != "":
         info_text = hand_info_text + ':' + hand_sign_text
 
-        #############################    Calling Gesture control functions     ################################
+        #############################    Calling Gesture control functions
         hst = hand_sign_text
         px, py = tuple(landmark_list[8])
         if (mode != 1 and mode != 2):
