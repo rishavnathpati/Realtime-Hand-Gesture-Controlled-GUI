@@ -224,5 +224,4 @@ The model using "LSTM" is as follows. <br>Please change "use_lstm = False" to "T
 * [Codacus](https://thecodacus.com/2017/08/16/gesture-recognition-virtual-mouse-using-opencv-python/)
 
 # Translation and other improvements
-* [Nikita Kiselov](https://github.com/kinivi)
 * [Rishav Nath Pati](https://github.com/rishavnathpati)
