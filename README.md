@@ -1,4 +1,4 @@
-# Realtime-Hand-Gesture-Controlled-GUI
+# Realtime Hand Gesture Controlled GUI
 __________________________________________________________________________________________________________________________________________________________________
 ### Visual Demo:
 This visual demo is based on the old directory
