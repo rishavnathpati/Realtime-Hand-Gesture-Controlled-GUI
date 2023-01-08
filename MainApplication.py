@@ -40,7 +40,8 @@ def main():
     # Argument parsing #######################################################
     args = get_args()
 
-    src = args.src
+    # src = args.src
+    src=0
     width = args.width
     height = args.height
 
