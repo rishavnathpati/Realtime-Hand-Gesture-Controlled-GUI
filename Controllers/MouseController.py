@@ -4,7 +4,7 @@ from pynput.mouse import Button, Controller
 mouse = Controller()
 
 sx, sy = 1920, 1080
-camx, camy = 1280, 720
+camx, camy = 1920, 1080
 pinchFlag = 0
 clickFlag = 0
 dclickFlag = 0

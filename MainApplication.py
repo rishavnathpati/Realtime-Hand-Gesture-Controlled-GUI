@@ -9,7 +9,7 @@ import numpy as np
 
 from model import KeyPointClassifier, PointHistoryClassifier
 from utils import CvFpsCalc, DrawLandmarks, LandmarkProcessor, MultithreadedWebcam
-from GUIController import MouseController  # , KeyboardController
+from Controllers import MouseController, KeyboardController
 
 
 def get_args():
@@ -18,8 +18,8 @@ def get_args():
     parser.add_argument("--src",
                         type=str,
                         default="http://192.168.0.4:8080/video")
-    parser.add_argument("--width", help='cap width', type=int, default=1280)
-    parser.add_argument("--height", help='cap height', type=int, default=720)
+    parser.add_argument("--width", help='cap width', type=int, default=1920)
+    parser.add_argument("--height", help='cap height', type=int, default=1080)
 
     parser.add_argument('--use_static_image_mode', action='store_true')
     parser.add_argument("--min_detection_confidence",
@@ -41,7 +41,7 @@ def main():
     args = get_args()
 
     # src = args.src
-    src=0
+    src = 0
     width = args.width
     height = args.height
 
@@ -54,6 +54,10 @@ def main():
     # Camera preparation #####################################################
     cap = MultithreadedWebcam.VideoCaptureThreading(src, width, height)
     cap.start()
+
+    # cap = cv2.VideoCapture(src)
+    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
     # Loading Mediapipe Model ################################################
     mp_hands = mp.solutions.hands
@@ -136,7 +140,7 @@ def main():
                 pre_processed_point_history_list = LandmarkProcessor.pre_process_point_history(
                     debug_image, point_history)
                 # Write to the dataset file
-                if(mode == 1 or mode == 2):
+                if (mode == 1 or mode == 2):
                     LandmarkProcessor.logging_csv(number, mode, pre_processed_landmark_list,
                                                   pre_processed_point_history_list)
 
@@ -198,6 +202,9 @@ def gestureControl(px, py, hst, hand):
 
     if (hst == "Drag" and hand == "Right"):
         MouseController.mouseControl(px, py, "drag")
+
+    if (hst == "Close" and hand == "Right"):
+        KeyboardController.keyboardController("close")
 
 
 def select_mode(key, mode):
