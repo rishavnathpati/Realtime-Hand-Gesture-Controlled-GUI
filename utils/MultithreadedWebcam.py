@@ -4,7 +4,6 @@ import cv2
 
 class VideoCaptureThreading(object):
     def __init__(self, src, width, height):
-
         self.src = src
         self.cap = cv2.VideoCapture(self.src)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -18,7 +17,7 @@ class VideoCaptureThreading(object):
 
     def start(self):
         if self.started:
-            print('[!] Threaded video capturing has already been started.')
+            print("[!] Threaded video capturing has already been started.")
             return None
         self.started = True
         self.thread = threading.Thread(target=self.update, args=())

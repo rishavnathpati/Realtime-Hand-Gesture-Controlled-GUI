@@ -15,21 +15,23 @@ from Controllers import MouseController, KeyboardController
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--src",
-                        type=str,
-                        default="http://192.168.0.4:8080/video")
-    parser.add_argument("--width", help='cap width', type=int, default=1920)
-    parser.add_argument("--height", help='cap height', type=int, default=1080)
+    parser.add_argument("--src", type=str, default="http://192.168.0.4:8080/video")
+    parser.add_argument("--width", help="cap width", type=int, default=1920)
+    parser.add_argument("--height", help="cap height", type=int, default=1080)
 
-    parser.add_argument('--use_static_image_mode', action='store_true')
-    parser.add_argument("--min_detection_confidence",
-                        help='min_detection_confidence',
-                        type=float,
-                        default=0.8)
-    parser.add_argument("--min_tracking_confidence",
-                        help='min_tracking_confidence',
-                        type=float,
-                        default=0.8)
+    parser.add_argument("--use_static_image_mode", action="store_true")
+    parser.add_argument(
+        "--min_detection_confidence",
+        help="min_detection_confidence",
+        type=float,
+        default=0.8,
+    )
+    parser.add_argument(
+        "--min_tracking_confidence",
+        help="min_tracking_confidence",
+        type=float,
+        default=0.8,
+    )
 
     args = parser.parse_args()
 
@@ -73,16 +75,16 @@ def main():
     point_history_classifier = PointHistoryClassifier()
 
     # Reading static and dynamic gesture labels ##############################
-    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
-              encoding='utf-8-sig') as f:
+    with open(
+        "model/keypoint_classifier/keypoint_classifier_label.csv", encoding="utf-8-sig"
+    ) as f:
         keypoint_classifier_labels = csv.reader(f)
-        keypoint_classifier_labels = [
-            row[0] for row in keypoint_classifier_labels
-        ]
+        keypoint_classifier_labels = [row[0] for row in keypoint_classifier_labels]
 
     with open(
-            'model/point_history_classifier/point_history_classifier_label.csv',
-            encoding='utf-8-sig') as f:
+        "model/point_history_classifier/point_history_classifier_label.csv",
+        encoding="utf-8-sig",
+    ) as f:
         point_history_classifier_labels = csv.reader(f)
         point_history_classifier_labels = [
             row[0] for row in point_history_classifier_labels
@@ -127,8 +129,9 @@ def main():
         image.flags.writeable = True
 
         if results.multi_hand_landmarks is not None:
-            for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
-                                                  results.multi_handedness):
+            for hand_landmarks, handedness in zip(
+                results.multi_hand_landmarks, results.multi_handedness
+            ):
                 # Bounding box calculation
                 brect = calc_bounding_rect(debug_image, hand_landmarks)
                 # Landmark calculation
@@ -136,13 +139,21 @@ def main():
 
                 # Conversion to relative coordinates / normalized coordinates
                 pre_processed_landmark_list = LandmarkProcessor.pre_process_landmark(
-                    landmark_list)
-                pre_processed_point_history_list = LandmarkProcessor.pre_process_point_history(
-                    debug_image, point_history)
+                    landmark_list
+                )
+                pre_processed_point_history_list = (
+                    LandmarkProcessor.pre_process_point_history(
+                        debug_image, point_history
+                    )
+                )
                 # Write to the dataset file
-                if (mode == 1 or mode == 2):
-                    LandmarkProcessor.logging_csv(number, mode, pre_processed_landmark_list,
-                                                  pre_processed_point_history_list)
+                if mode == 1 or mode == 2:
+                    LandmarkProcessor.logging_csv(
+                        number,
+                        mode,
+                        pre_processed_landmark_list,
+                        pre_processed_point_history_list,
+                    )
 
                 # Hand sign classification
                 hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
@@ -156,24 +167,27 @@ def main():
                 point_history_len = len(pre_processed_point_history_list)
                 if point_history_len == (history_length * 2):
                     finger_gesture_id = point_history_classifier(
-                        pre_processed_point_history_list)
+                        pre_processed_point_history_list
+                    )
 
                 # Calculates the gesture IDs in the latest detection
                 finger_gesture_history.append(finger_gesture_id)
-                most_common_fg_id = Counter(
-                    finger_gesture_history).most_common()
+                most_common_fg_id = Counter(finger_gesture_history).most_common()
 
                 # Drawing part
                 debug_image = draw_bounding_rect(use_brect, debug_image, brect)
 
-                debug_image = DrawLandmarks.draw_landmarks(
-                    debug_image, landmark_list)
+                debug_image = DrawLandmarks.draw_landmarks(debug_image, landmark_list)
 
                 debug_image = draw_info_text(
-                    landmark_list, debug_image, brect, handedness,
+                    landmark_list,
+                    debug_image,
+                    brect,
+                    handedness,
                     keypoint_classifier_labels[hand_sign_id],
                     point_history_classifier_labels[most_common_fg_id[0][0]],
-                    mode)
+                    mode,
+                )
         else:
             point_history.append([0, 0])
 
@@ -181,29 +195,28 @@ def main():
         debug_image = draw_info(debug_image, fps, mode, number)
 
         # Screen reflection ###################################################
-        cv2.imshow('Hand Gesture Recognition', debug_image)
+        cv2.imshow("Hand Gesture Recognition", debug_image)
 
     cv2.destroyAllWindows()
 
 
 def gestureControl(px, py, hst, hand):
-
     print(hst)
 
-    if (hst == "Close"):
+    if hst == "Close":
         MouseController.mouseControl(px, py, "close")
 
-    if (hst == "Pointer" and hand == "Right"):
+    if hst == "Pointer" and hand == "Right":
         print(px, py)
         MouseController.mouseControl(px, py, "pointer")
 
-    if (hst == "Click" and hand == "Right"):
+    if hst == "Click" and hand == "Right":
         MouseController.mouseControl(px, py, "click")
 
-    if (hst == "Drag" and hand == "Right"):
+    if hst == "Drag" and hand == "Right":
         MouseController.mouseControl(px, py, "drag")
 
-    if (hst == "Close" and hand == "Right"):
+    if hst == "Close" and hand == "Right":
         KeyboardController.keyboardController("close")
 
 
@@ -256,38 +269,60 @@ def calc_landmark_list(image, landmarks):
 def draw_bounding_rect(use_brect, image, brect):
     if use_brect:
         # Outer rectangle
-        cv2.rectangle(image, (brect[0], brect[1]), (brect[2], brect[3]),
-                      (0, 0, 0), 1)
+        cv2.rectangle(image, (brect[0], brect[1]), (brect[2], brect[3]), (0, 0, 0), 1)
 
     return image
 
 
-def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
-                   finger_gesture_text, mode):
-    cv2.rectangle(image, (brect[0], brect[1]), (brect[2], brect[1] - 22),
-                  (0, 0, 0), -1)
+def draw_info_text(
+    landmark_list, image, brect, handedness, hand_sign_text, finger_gesture_text, mode
+):
+    cv2.rectangle(image, (brect[0], brect[1]), (brect[2], brect[1] - 22), (0, 0, 0), -1)
 
     hand_info_text = handedness.classification[0].label[0:]
     if hand_sign_text != "":
-        info_text = hand_info_text + ':' + hand_sign_text
+        info_text = hand_info_text + ":" + hand_sign_text
 
         # Calling Gesture control functions
         hst = hand_sign_text
         index_x, index_y = tuple(landmark_list[8])
         thumb_x, thumb_y = tuple(landmark_list[4])
-        px, py = (index_x + thumb_x)//2, (index_y + thumb_y)//2
-        if (mode != 1 and mode != 2):
+        px, py = (index_x + thumb_x) // 2, (index_y + thumb_y) // 2
+        if mode != 1 and mode != 2:
             gestureControl(px, py, hst, hand_info_text)
 
-    cv2.putText(image, info_text, (brect[0] + 5, brect[1] - 4),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(
+        image,
+        info_text,
+        (brect[0] + 5, brect[1] - 4),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.6,
+        (255, 255, 255),
+        1,
+        cv2.LINE_AA,
+    )
 
     if finger_gesture_text != "":
-        cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv2.LINE_AA)
-        cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2,
-                    cv2.LINE_AA)
+        cv2.putText(
+            image,
+            "Finger Gesture:" + finger_gesture_text,
+            (10, 60),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (0, 0, 0),
+            4,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            image,
+            "Finger Gesture:" + finger_gesture_text,
+            (10, 60),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (255, 255, 255),
+            2,
+            cv2.LINE_AA,
+        )
 
     return image
 
@@ -295,29 +330,60 @@ def draw_info_text(landmark_list, image, brect, handedness, hand_sign_text,
 def draw_point_history(image, point_history):
     for index, point in enumerate(point_history):
         if point[0] != 0 and point[1] != 0:
-            cv2.circle(image, (point[0], point[1]), 1 + int(index / 2),
-                       (152, 251, 152), 2)
+            cv2.circle(
+                image, (point[0], point[1]), 1 + int(index / 2), (152, 251, 152), 2
+            )
 
     return image
 
 
 def draw_info(image, fps, mode, number):
-    cv2.putText(image, "FPS:" + str(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
-                1.0, (0, 0, 0), 4, cv2.LINE_AA)
-    cv2.putText(image, "FPS:" + str(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
-                1.0, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(
+        image,
+        "FPS:" + str(fps),
+        (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        (0, 0, 0),
+        4,
+        cv2.LINE_AA,
+    )
+    cv2.putText(
+        image,
+        "FPS:" + str(fps),
+        (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        (255, 255, 255),
+        2,
+        cv2.LINE_AA,
+    )
 
-    mode_string = ['Logging Key Point', 'Logging Point History']
+    mode_string = ["Logging Key Point", "Logging Point History"]
     if 1 <= mode <= 2:
-        cv2.putText(image, "MODE:" + mode_string[mode - 1], (10, 90),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
-                    cv2.LINE_AA)
+        cv2.putText(
+            image,
+            "MODE:" + mode_string[mode - 1],
+            (10, 90),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.6,
+            (255, 255, 255),
+            1,
+            cv2.LINE_AA,
+        )
         if 0 <= number <= 9:
-            cv2.putText(image, "NUM:" + str(number), (10, 110),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1,
-                        cv2.LINE_AA)
+            cv2.putText(
+                image,
+                "NUM:" + str(number),
+                (10, 110),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (255, 255, 255),
+                1,
+                cv2.LINE_AA,
+            )
     return image
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

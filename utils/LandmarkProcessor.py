@@ -7,13 +7,13 @@ def logging_csv(number, mode, landmark_list, point_history_list):
     # if mode == 0:
     #     pass
     if mode == 1 and (0 <= number <= 9):
-        csv_path = 'model/keypoint_classifier/keypoint.csv'
-        with open(csv_path, 'a', newline="") as f:
+        csv_path = "model/keypoint_classifier/keypoint.csv"
+        with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *landmark_list])
     if mode == 2 and (0 <= number <= 9):
-        csv_path = 'model/point_history_classifier/point_history.csv'
-        with open(csv_path, 'a', newline="") as f:
+        csv_path = "model/point_history_classifier/point_history.csv"
+        with open(csv_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([number, *point_history_list])
 
@@ -31,8 +31,7 @@ def pre_process_landmark(landmark_list):
         temp_landmark_list[index][1] = temp_landmark_list[index][1] - base_y
 
     # Convert to a one-dimensional list
-    temp_landmark_list = list(
-        itertools.chain.from_iterable(temp_landmark_list))
+    temp_landmark_list = list(itertools.chain.from_iterable(temp_landmark_list))
 
     # Normalization
     max_value = max(list(map(abs, temp_landmark_list)))
@@ -56,13 +55,14 @@ def pre_process_point_history(image, point_history):
         if index == 0:
             base_x, base_y = point[0], point[1]
 
-        temp_point_history[index][0] = (temp_point_history[index][0] -
-                                        base_x) / image_width
-        temp_point_history[index][1] = (temp_point_history[index][1] -
-                                        base_y) / image_height
+        temp_point_history[index][0] = (
+            temp_point_history[index][0] - base_x
+        ) / image_width
+        temp_point_history[index][1] = (
+            temp_point_history[index][1] - base_y
+        ) / image_height
 
     # Convert to a one-dimensional list
-    temp_point_history = list(
-        itertools.chain.from_iterable(temp_point_history))
+    temp_point_history = list(itertools.chain.from_iterable(temp_point_history))
 
     return temp_point_history
